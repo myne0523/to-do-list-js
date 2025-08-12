@@ -11,14 +11,33 @@ function handleTaskActions(e) {
 
     if (e.target.closest(".edit")) {
         let newTitle = prompt("Enter the new task title", task.title);
+
         if (newTitle === null) return;
+
         newTitle = newTitle.trim();
+
         if (!newTitle) {
             alert("Task title cannot be empty");
             return;
         }
+
+        const isDuplicate = tasks.some(
+            (task, index) =>
+                task.title.toLowerCase() === newTitle.toLowerCase() &&
+                taskIndex !== index
+        );
+
+        if (isDuplicate) {
+            alert(
+                "Task with this title has already exist ! Please use a different task title"
+            );
+            return;
+        }
+
         task.title = newTitle;
+
         renderTask();
+
         return;
     }
 
@@ -40,6 +59,17 @@ function addTask(e) {
     e.preventDefault();
     const value = todoInput.value.trim();
     if (!value) return alert("please enter something");
+
+    const isDuplicate = tasks.some(
+        (task) => task.title.toLowerCase() === value.toLowerCase()
+    );
+
+    if (isDuplicate) {
+        alert(
+            "Task with this title has already exist ! Please use a different task title"
+        );
+        return;
+    }
 
     const newTask = {
         title: value,
