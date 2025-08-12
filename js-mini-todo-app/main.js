@@ -43,6 +43,10 @@ function addTask(e) {
 }
 
 function renderTask() {
+    if (!tasks.length) {
+        taskList.innerHTML = `<li class="empty-message">No tasks available</li>`;
+        return;
+    }
     const html = tasks
         .map(
             (task, index) =>
