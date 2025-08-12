@@ -4,7 +4,7 @@ const taskList = document.querySelector(`#task-list`);
 const todoForm = document.querySelector(`#todo-form`);
 const todoInput = document.querySelector(`#todo-input`);
 
-taskList.onclick = function (e) {
+function handleTaskActions(e) {
     const taskItem = e.target.closest(".task-item");
     const taskIndex = +taskItem.getAttribute("task-index");
     const task = tasks[taskIndex];
@@ -12,20 +12,22 @@ taskList.onclick = function (e) {
     if (e.target.closest(".edit")) {
         const newTitle = prompt("Enter the new task title", task.title);
         task.title = newTitle;
-        render();
+        renderTask();
     } else if (e.target.closest(".done")) {
-        console.log("Mark as done/undone");
+        task.completed = !task.completed;
+        renderTask();
     } else if (e.target.closest(".delete")) {
-        console.log("Delete");
+        if (confirm(`Are you sure about deleting ${task.title} ?`)) {
+            tasks.splice(taskIndex, 1);
+            renderTask();
+        }
     }
-};
+}
 
-todoForm.onsubmit = function (e) {
+function addTask(e) {
     e.preventDefault();
     const value = todoInput.value.trim();
-    if (!value) {
-        return alert("please enter something");
-    }
+    if (!value) return alert("please enter something");
 
     const newTask = {
         title: value,
@@ -33,14 +35,14 @@ todoForm.onsubmit = function (e) {
     };
     tasks.push(newTask);
 
-    // re-render
-    render();
+    // re-renderTask
+    renderTask();
 
     // clear input
     todoInput.value = "";
-};
+}
 
-function render() {
+function renderTask() {
     const html = tasks
         .map(
             (task, index) =>
@@ -62,4 +64,6 @@ function render() {
     taskList.innerHTML = html;
 }
 
-render();
+todoForm.addEventListener("submit", addTask);
+taskList.addEventListener("click", handleTaskActions);
+renderTask();
