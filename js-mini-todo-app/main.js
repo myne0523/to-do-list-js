@@ -1,4 +1,4 @@
-const tasks = [];
+const tasks = JSON.parse(localStorage.getItem("tasks")) ?? [];
 
 const taskList = document.querySelector(`#task-list`);
 const todoForm = document.querySelector(`#todo-form`);
@@ -11,6 +11,10 @@ function isDuplicateTask(newTitle, excludeIndex = -1) {
             excludeIndex !== index
     );
     return isDuplicate;
+}
+
+function saveTask() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function handleTaskActions(e) {
@@ -41,12 +45,15 @@ function handleTaskActions(e) {
 
         renderTask();
 
+        saveTask();
+
         return;
     }
 
     if (e.target.closest(".done")) {
         task.completed = !task.completed;
         renderTask();
+        saveTask();
         return;
     }
 
@@ -54,6 +61,7 @@ function handleTaskActions(e) {
         if (confirm(`Are you sure about deleting ${task.title} ?`)) {
             tasks.splice(taskIndex, 1);
             renderTask();
+            saveTask();
         }
     }
 }
@@ -75,6 +83,8 @@ function addTask(e) {
         completed: false,
     };
     tasks.push(newTask);
+
+    saveTask();
 
     // re-renderTask
     renderTask();
